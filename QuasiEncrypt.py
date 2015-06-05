@@ -8,31 +8,31 @@ class QuasiAON(object):
     to another encryption method to increase security.
     """
     def __init__(self):
-        pass
+        self.last_num = 7
 
     def construct_latin_square(self):
         """
         Construct the matrix needed to encode and decode the pseudomessage.
         """
         matrix = []
-        last_num = 256
+        
 
         #Get the first row of integers in a random order.
-        first_row = range(1, last_num)
+        first_row = range(1, self.last_num)
         random.shuffle(first_row)
 
         #Add the first row to the matrix
         matrix.append(first_row)
 
         #Get the remaining rows.
-        for each_num in range(2, last_num):
+        for each_num in range(2, self.last_num):
             each_row = []
 
             #Loop over each column in the first row to calculate the
             #appropriate values for the following rows.
             for each_column in matrix[0]:
                 #Calculate the value.
-                new_value = (each_num * each_column) % (last_num + 1)
+                new_value = (each_num * each_column) % (self.last_num + 1)
 
                 #Add the value to the new row.
                 each_row.append(new_value)
@@ -41,4 +41,8 @@ class QuasiAON(object):
             matrix.append(each_row)
 
         return matrix
+
+    def print_matrix(self, matrix):
+        for each_row in matrix:
+            print each_row
         
