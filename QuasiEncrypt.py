@@ -16,9 +16,6 @@ class QuasiAON(object):
         Construct the matrix needed to encode and decode the pseudomessage.
         """
         matrix = []
-        
-
-        #Get the first row of integers in a random order.
 
         #If the first row is passed to the function then use it, otherwise make
         #a random first row.
@@ -37,7 +34,7 @@ class QuasiAON(object):
             #appropriate values for the following rows.
             for each_column in matrix[0]:
                 #Calculate the value.
-                new_value = (each_num * each_column) % (self.last_num + 1)
+                new_value = (each_num * each_column) % (self.last_num)
 
                 #Add the value to the new row.
                 each_row.append(new_value)
@@ -55,12 +52,12 @@ class QuasiAON(object):
         previous_number = 0
         encoded_message = ''
 
-        for each_number in number_message:
+        for index, each_number in enumerate(number_message):
             number_as_integer = int(each_number)
             
             #Start the encoded message by mapping the first number in the number
             #message.
-            if each_number == number_message[0]:
+            if index == 0:
                 print 'initial number'
                 previous_number = latin_square[leader - 1][number_as_integer - 1]
 
@@ -70,7 +67,7 @@ class QuasiAON(object):
                 print 'following number'
                 previous_number = latin_square[previous_number - 1][number_as_integer - 1]
 
-            encoded_message = str(previous_number)
+            encoded_message += str(previous_number)
 
         return encoded_message
 
