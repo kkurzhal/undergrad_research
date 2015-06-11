@@ -58,13 +58,11 @@ class QuasiAON(object):
             #Start the encoded message by mapping the first number in the number
             #message.
             if index == 0:
-                print 'initial number'
                 previous_number = latin_square[leader - 1][number_as_integer - 1]
 
             #If it isn't the start, then use the previously mapped quasigroup
             #instead of the leader.
             else:
-                print 'following number'
                 previous_number = latin_square[previous_number - 1][number_as_integer - 1]
 
             encoded_message += str(previous_number)
