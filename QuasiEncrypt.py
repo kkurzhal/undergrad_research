@@ -69,11 +69,29 @@ class QuasiAON(object):
 
         return encoded_message
 
-    def decode_message(self, number_message, matrix, leader):
+    def decode_message(self, number_message, latin_square, leader):
         """
         Decode the message using the AON methodology.
         """
-        pass
+        new_value = 0
+        decoded_message = ''
+        
+        for index, each_number in enumerate(number_message):
+            number_as_integer = int(each_number)
+
+            #If the first item in the message is evaluated, then use the leader.
+            if index == 0:
+                new_value = latin_square[leader - 1][number_as_integer - 1]
+
+            #Otherwise, use the current item with the next item.
+            else:
+                previous_number = int(number_message[index - 1])
+                print previous_number
+                new_value = latin_square[previous_number - 1][number_as_integer - 1]
+
+            decoded_message += str(new_value)
+
+        return decoded_message
 
     def package_message(self, encoded_message, matrix, leader):
         """
