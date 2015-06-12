@@ -44,6 +44,28 @@ class QuasiAON(object):
 
         return matrix
 
+    def construct_latin_square_match(self, old_latin_square):
+        """
+        Construct a latin square that is the alternate match to another
+        latin square.  This allows for the creation of a quasigroup that
+        is used for decoding a message.
+        """
+        new_latin_square = []
+
+        for each_row in old_latin_square:
+            #Prepare all the elements of the row for appending.
+            new_row = [None for each_column in each_row]
+
+            for index, each_column in enumerate(each_row):
+                #Put the column value of the old latin square into the matching
+                #column in the new latin square.
+                new_row[each_column - 1] = index + 1
+
+            #Add the row to the new matching latin square.
+            new_latin_square.append(new_row)
+
+        return new_latin_square
+
     def encode_message(self, number_message, latin_square, leader):
         """
         Encode the message using the AON methodology.
