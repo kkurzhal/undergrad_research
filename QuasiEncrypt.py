@@ -116,6 +116,23 @@ class QuasiAON(object):
 
         return decoded_message
 
+    def get_number_list_from_bit_list(self, bit_list):
+        """
+        Take a bit list and turn it into a number list to map the values
+        for encoding.
+        """
+        #Convert each set of bits to the proper integer and add it to the number
+        #list.
+        number_list = map(lambda bit_string: int(bit_string, 2), bit_list)
+
+        return number_list
+
+    def get_bit_list_from_number_list(self, number_list):
+        """
+        Take a number list and turn it into a bit list to map the values
+        for decoding.
+        """
+
     def package_message(self, leader, matrix, encoded_message):
         """
         Package the encoded message with the the chosen leader and first
