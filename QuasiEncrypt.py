@@ -122,7 +122,7 @@ class QuasiAON(object):
         row of the matrix.
         """
         packaged_message = str(leader) + str(matrix[0]) + encoded_message
-        return 
+        return packaged_message
 
     def unpackage_message(self, packaged_message):
         """
