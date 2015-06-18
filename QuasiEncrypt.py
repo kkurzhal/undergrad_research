@@ -10,6 +10,7 @@ class QuasiAON(object):
     def __init__(self):
         #This must always be a prime number to get a true latin square.
         self.last_num = 7
+        self.block_size = 8
 
     def construct_latin_square(self, first_row = []):
         """
@@ -115,17 +116,23 @@ class QuasiAON(object):
 
         return decoded_message
 
-    def package_message(self, encoded_message, matrix, leader):
+    def package_message(self, leader, matrix, encoded_message):
         """
-        Prepare the message for sending.
+        Package the encoded message with the the chosen leader and first
+        row of the matrix.
         """
-        pass
+        packaged_message = str(leader) + str(matrix[0]) + encoded_message
+        return 
 
-    def unpackage_message(self, packet):
+    def unpackage_message(self, packaged_message):
         """
-        Unpack the message after it is received.
+        Unpack the message after it is received and return the leader,
+        first row of the matrix, and encoded message in a tuple.
         """
-        pass
+        leader = int(packaged_message[0])
+        first_row = packaged_message[1:self.last_num]
+        encoded_message = packaged_message[self.last_num:]
+        return (leader, first_row, encoded_message)
 
     def convert_message_to_number_string(self, message):
         """
@@ -135,6 +142,66 @@ class QuasiAON(object):
         #Get the value of each character and format it in terms of bits.
         number_list = [str(ord(character)) for character in message]
         return ''.join(number_list)
+
+    def message_to_bit_list(self, message):
+        """
+        Get a list of bit strings representing the message, where the
+        number of bits is determined by the set block size for the
+        class.
+        """
+        bit_list = []
+
+        #Loop through each character in the message.
+        for each_character in message:
+            character_value = ord(each_character)
+            
+            #Get the binary string represented for the interger representation
+            #of the character.
+            bit_string = bin(character_value)[2:]
+
+            #Get the padding that might possibly be needed.
+            needed_padding = self.block_size - (len(bit_string) % self.block_size)
+            padding = '0' * needed_padding
+            bit_string = padding + bit_string
+
+            #Handle any cases where the remaining bit string is larger than
+            #the block size by splitting up the bit string into that block size.
+            block_split_count = len(bit_string) / self.block_size
+            for each_block in range(block_split_count):
+                #Get the block of bits from the bit string.
+                string_position = (each_block + 1) * self.block_size
+                bits = bit_string[:string_position]
+
+                #Add the block bits to the bit list and throw away those bits
+                #from the bit string.
+                bit_list.append(bits)
+                bit_string = bit_string[string_position:]
+            
+        return bit_list
+
+    def bit_list_to_message(self, bit_list):
+        """
+        Take a bit list and convert it back into the appropriate
+        message.  The resulting message depends on the set block size
+        of the class.
+        """
+        message = ''
+
+        #Join the bits together into a single string.
+        bit_string = ''.join(bit_list)
+
+        #Unpack all blocks of bits into a message.
+        while len(bit_string) > 0:
+            
+            #Get the value of the block of bits and the matching character.
+            bit_value = int(bit_string[:self.block_size], 2)
+            character = chr(bit_value)
+
+            #Get the character and clear the bits from the original bit string.
+            message += character
+            bit_string = bit_string[self.block_size:]
+
+        return message
 
     def print_matrix(self, matrix):
         for each_row in matrix:
