@@ -121,7 +121,8 @@ class QuasiAON(object):
         Package the encoded message with the the chosen leader and first
         row of the matrix.
         """
-        packaged_message = str(leader) + str(matrix[0]) + encoded_message
+        row = map(lambda each_number: str(each_number), matrix[0])
+        packaged_message = str(leader) + ''.join(row) + encoded_message
         return packaged_message
 
     def unpackage_message(self, packaged_message):
@@ -130,7 +131,7 @@ class QuasiAON(object):
         first row of the matrix, and encoded message in a tuple.
         """
         leader = int(packaged_message[0])
-        first_row = packaged_message[1:self.last_num]
+        first_row = map(lambda each_number: int(each_number), packaged_message[1:self.last_num])
         encoded_message = packaged_message[self.last_num:]
         return (leader, first_row, encoded_message)
 
