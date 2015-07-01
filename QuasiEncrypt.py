@@ -9,10 +9,57 @@ class QuasiAON(object):
     """
     def __init__(self):
         #This must always be a prime number to get a true latin square.
-        self.last_num = 7
+        self.last_num = 257
         self.block_size = 8
 
-    def construct_latin_square(self, first_row = []):
+    def run_through_example(self, message='hello world', first_row=[3, 5, 2, 1, 6, 4], leader=4):
+        """
+        Take a message and run through the entire encoding/decoding
+        process, printing out the information along the way.
+        """
+        print 'Initial message:', message
+        print 'Initial first row:', first_row
+        print 'Initial leader:', leader, '\n'
+        
+        bits = self.message_to_bit_list(message)
+        print 'Bit list:', bits
+        
+        numbers = self.bit_list_to_number_list(bits)
+        print 'Number list:', numbers, '\n'
+
+        encode_square = self.construct_encoding_square(first_row)
+        print 'Encoding latin square:'
+##        self.print_matrix(encode_square), '\n'
+
+        encoded_message = self.encode_message(numbers, encode_square, leader)
+        print 'Encoded message:', encoded_message
+
+        packaged_message = self.package_message(encoded_message, encode_square, leader)
+        print 'Packaged message:', packaged_message, '\n'
+
+        leader, first_row, encoded_message = self.unpackage_message(packaged_message)
+        print 'Unpackaged leader:', leader
+        print 'Unpackaged first row:', first_row
+        print 'Unpackaged encoded message:', encoded_message
+
+        encode_square = self.construct_encoding_square(first_row)
+        print 'Unpackaged encoding square:'
+##        self.print_matrix(encode_square)
+
+        decode_square = self.construct_decoding_square(encode_square)
+        print 'Decoding latin square:'
+##        self.print_matrix(decode_square)
+
+        numbers = self.decode_message(encoded_message, decode_square, leader)
+        print 'Decoded message/number list:', numbers
+
+        bits = self.number_list_to_bit_list(numbers)
+        print 'Decoded bit list:', bits
+
+        message = self.bit_list_to_message(bits)
+        print 'Decoded message:', message
+
+    def construct_encoding_square(self, first_row = []):
         """
         Construct the matrix needed to encode and decode the pseudomessage.
         """
@@ -45,7 +92,7 @@ class QuasiAON(object):
 
         return matrix
 
-    def construct_latin_square_match(self, old_latin_square):
+    def construct_decoding_square(self, encoding_latin_square):
         """
         Construct a latin square that is the alternate match to another
         latin square.  This allows for the creation of a quasigroup that
@@ -53,7 +100,7 @@ class QuasiAON(object):
         """
         new_latin_square = []
 
-        for each_row in old_latin_square:
+        for each_row in encoding_latin_square:
             #Prepare all the elements of the row for appending.
             new_row = [None for each_column in each_row]
 
@@ -109,14 +156,14 @@ class QuasiAON(object):
             #Otherwise, use the current item with the next item.
             else:
                 previous_number = int(number_message[index - 1])
-                print previous_number
+##                print previous_number
                 new_value = latin_square[previous_number - 1][number_as_integer - 1]
 
             decoded_message += str(new_value)
 
         return decoded_message
 
-    def get_number_list_from_bit_list(self, bit_list):
+    def bit_list_to_number_list(self, bit_list):
         """
         Take a bit list and turn it into a number list to map the values
         for encoding.
@@ -127,13 +174,16 @@ class QuasiAON(object):
 
         return number_list
 
-    def get_bit_list_from_number_list(self, number_list):
+    def number_list_to_bit_list(self, number_list):
         """
         Take a number list and turn it into a bit list to map the values
         for decoding.
         """
+        bit_list = map(lambda each_number: bin(each_number), number_list)
 
-    def package_message(self, leader, matrix, encoded_message):
+        return bit_list
+
+    def package_message(self, encoded_message, matrix, leader):
         """
         Package the encoded message with the the chosen leader and first
         row of the matrix.
