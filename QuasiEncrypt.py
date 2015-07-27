@@ -13,7 +13,7 @@ class QuasiAON(object):
         self.wrap_num = self.last_num - 1
         self.block_size = 8
 
-    def run_through_example(self, message='hello world', first_row=[], leader=4):
+    def run_through_example(self, message='hello world', first_row=[], leader=4, algorithm = None):
         """
         Take a message and run through the entire encoding/decoding
         process, printing out the information along the way.
@@ -30,7 +30,7 @@ class QuasiAON(object):
 
         numbers = self.message_to_number_list(message)
 
-        encode_square = self.construct_encoding_square(first_row)
+        encode_square = self.construct_encoding_square(first_row, algorithm)
         print 'Encoding latin square:'
 ##        self.print_matrix(encode_square), '\n'
         print len(encode_square), 'x', len(encode_square[-1])
@@ -99,12 +99,12 @@ class QuasiAON(object):
             return value
 
     def custom_encoding_algorithm(self, x, y):
-        pass
+        return (x + y + (3 * (((x**2) * y) % 9)))
 
     def default_encoding_algorithm(self, x, y):
-        pass
+        return x * y
 
-    def construct_encoding_square(self, first_row = []):
+    def construct_encoding_square(self, first_row = [], algorithm = None):
         """
         Construct the matrix needed to encode and decode the pseudomessage.
         """
@@ -129,7 +129,14 @@ class QuasiAON(object):
             for each_column in matrix[0]:
                 #Calculate the value.
                 try:
-                    new_value = (each_num * each_column) % (self.last_num)
+                    algorithm_result = 0
+                    
+                    if algorithm == None:
+                        algorithm_result = self.default_encoding_algorithm(each_num, each_column)
+                    else:
+                        algorithm_result = algorithm(each_num, each_column)
+                        
+                    new_value = algorithm_result % (self.last_num)
 
                     #Add the value to the new row.
                     each_row.append(new_value)
