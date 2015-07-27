@@ -10,37 +10,48 @@ class QuasiAON(object):
     def __init__(self):
         #This must always be a prime number to get a true latin square.
         self.last_num = 257
+        self.wrap_num = self.last_num - 1
         self.block_size = 8
 
-    def run_through_example(self, message='hello world', first_row=[3, 5, 2, 1, 6, 4], leader=4):
+    def run_through_example(self, message='hello world', first_row=[], leader=4):
         """
         Take a message and run through the entire encoding/decoding
         process, printing out the information along the way.
         """
-        print 'Initial message:', message
+        print 'Initial message:', '"' + message + '"'
         print 'Initial first row:', first_row
         print 'Initial leader:', leader, '\n'
         
-        bits = self.message_to_bit_list(message)
-        print 'Bit list:', bits
+##        bits = self.message_to_bit_list(message)
+##        print 'Bit list:', bits
         
-        numbers = self.bit_list_to_number_list(bits)
-        print 'Number list:', numbers, '\n'
+##        numbers = self.bit_list_to_number_list(bits)
+##        print 'Number list:', numbers, '\n'
+
+        numbers = self.message_to_number_list(message)
 
         encode_square = self.construct_encoding_square(first_row)
         print 'Encoding latin square:'
 ##        self.print_matrix(encode_square), '\n'
+        print len(encode_square), 'x', len(encode_square[-1])
 
         encoded_message = self.encode_message(numbers, encode_square, leader)
-        print 'Encoded message:', encoded_message
+        print 'Encoded message length:', len(encoded_message)
+        print 'Encoded message:'
+        print encoded_message
+
+        print 'First row:', encode_square[0]
 
         packaged_message = self.package_message(encoded_message, encode_square, leader)
         print 'Packaged message:', packaged_message, '\n'
 
-        leader, first_row, encoded_message = self.unpackage_message(packaged_message)
+        leader, first_row, de_encoded_message = self.unpackage_message(packaged_message)
         print 'Unpackaged leader:', leader
         print 'Unpackaged first row:', first_row
         print 'Unpackaged encoded message:', encoded_message
+
+        print 'Encoded == De-encoded:', encoded_message == de_encoded_message
+        print 'De-encoded message length:', len(de_encoded_message)
 
         encode_square = self.construct_encoding_square(first_row)
         print 'Unpackaged encoding square:'
@@ -48,16 +59,50 @@ class QuasiAON(object):
 
         decode_square = self.construct_decoding_square(encode_square)
         print 'Decoding latin square:'
-##        self.print_matrix(decode_square)
+##        self.print_matrix(deacode_square)
 
-        numbers = self.decode_message(encoded_message, decode_square, leader)
+##        encoded_message = self.message_to_bit_list(encoded_message)
+##        encoded_message = self.bit_list_to_number_list(encoded_message)
+        unpackaged_number_list = self.message_to_number_list(de_encoded_message)
+        print 'De-encoded number list == Encoded number list:', numbers == unpackaged_number_list
+        print 'Unpackaged number list:', unpackaged_number_list
+
+        numbers = self.decode_message(unpackaged_number_list, decode_square, leader)
         print 'Decoded message/number list:', numbers
 
-        bits = self.number_list_to_bit_list(numbers)
-        print 'Decoded bit list:', bits
+##        bits = self.number_list_to_bit_list(numbers)
+##        print 'Decoded bit list:', bits
 
-        message = self.bit_list_to_message(bits)
-        print 'Decoded message:', message
+##        message = self.bit_list_to_message(bits)
+##        print 'Decoded message:', message
+
+        final_message = self.number_list_to_message(numbers)
+        print 'Decoded message:', '"' + final_message + '"'
+        print 'Decoded message == Original message:', final_message == message
+
+    def wrap_value(self, value):
+        """
+        Get the wrapped value that results when a number is too high.
+        """
+        if value == self.wrap_num:
+            return 0
+        else:
+            return value
+
+    def unwrap_value(self, value):
+        """
+        Get the unwrapped value that results when a number is 0.
+        """
+        if value == 0:
+            return self.wrap_num
+        else:
+            return value
+
+    def custom_encoding_algorithm(self, x, y):
+        pass
+
+    def default_encoding_algorithm(self, x, y):
+        pass
 
     def construct_encoding_square(self, first_row = []):
         """
@@ -69,6 +114,7 @@ class QuasiAON(object):
         #a random first row.
         if len(first_row) == 0:
             first_row = range(1, self.last_num)
+##            first_row = map(lambda value: chr(value), first_row)
             random.shuffle(first_row)
 
         #Add the first row to the matrix
@@ -82,10 +128,20 @@ class QuasiAON(object):
             #appropriate values for the following rows.
             for each_column in matrix[0]:
                 #Calculate the value.
-                new_value = (each_num * each_column) % (self.last_num)
+                try:
+                    new_value = (each_num * each_column) % (self.last_num)
 
-                #Add the value to the new row.
-                each_row.append(new_value)
+                    #Add the value to the new row.
+                    each_row.append(new_value)
+                except Exception as err:
+                    print err
+                    print 'each_num type:', type(each_num)
+                    print 'each_column type:', type(each_column)
+                    print 'each_column value:"' + each_column + '"'
+                    print 'last_num type:', type(self.last_num)
+                    print 'Value:', new_value
+                    print 'First Row:', first_row
+                    exit(1)
 
             #Add the row to the matrix
             matrix.append(each_row)
@@ -107,7 +163,13 @@ class QuasiAON(object):
             for index, each_column in enumerate(each_row):
                 #Put the column value of the old latin square into the matching
                 #column in the new latin square.
-                new_row[each_column - 1] = index + 1
+                try:
+                    new_row[each_column - 1] = index + 1
+                except Exception as err:
+                    print err
+                    print each_column
+                    exit(1)
+                
 
             #Add the row to the new matching latin square.
             new_latin_square.append(new_row)
@@ -123,7 +185,7 @@ class QuasiAON(object):
         encoded_message = ''
 
         for index, each_number in enumerate(number_message):
-            number_as_integer = int(each_number)
+            number_as_integer = each_number
             
             #Start the encoded message by mapping the first number in the number
             #message.
@@ -135,7 +197,7 @@ class QuasiAON(object):
             else:
                 previous_number = latin_square[previous_number - 1][number_as_integer - 1]
 
-            encoded_message += str(previous_number)
+            encoded_message += chr(self.wrap_value(previous_number))
 
         return encoded_message
 
@@ -144,10 +206,10 @@ class QuasiAON(object):
         Decode the message using the AON methodology.
         """
         new_value = 0
-        decoded_message = ''
+        decoded_number_list = []
         
         for index, each_number in enumerate(number_message):
-            number_as_integer = int(each_number)
+            number_as_integer = each_number
 
             #If the first item in the message is evaluated, then use the leader.
             if index == 0:
@@ -155,13 +217,13 @@ class QuasiAON(object):
 
             #Otherwise, use the current item with the next item.
             else:
-                previous_number = int(number_message[index - 1])
+                previous_number = number_message[index - 1]
 ##                print previous_number
                 new_value = latin_square[previous_number - 1][number_as_integer - 1]
 
-            decoded_message += str(new_value)
+            decoded_number_list.append(self.unwrap_value(new_value))
 
-        return decoded_message
+        return decoded_number_list
 
     def bit_list_to_number_list(self, bit_list):
         """
@@ -188,8 +250,8 @@ class QuasiAON(object):
         Package the encoded message with the the chosen leader and first
         row of the matrix.
         """
-        row = map(lambda each_number: str(each_number), matrix[0])
-        packaged_message = str(leader) + ''.join(row) + encoded_message
+        row = map(lambda each_number: chr(self.wrap_value(each_number)), matrix[0])
+        packaged_message = chr(self.wrap_value(leader)) + ''.join(row) + encoded_message
         return packaged_message
 
     def unpackage_message(self, packaged_message):
@@ -197,8 +259,8 @@ class QuasiAON(object):
         Unpack the message after it is received and return the leader,
         first row of the matrix, and encoded message in a tuple.
         """
-        leader = int(packaged_message[0])
-        first_row = map(lambda each_number: int(each_number), packaged_message[1:self.last_num])
+        leader = self.unwrap_value(ord(packaged_message[0]))
+        first_row = map(lambda each_number: self.unwrap_value(ord(each_number)), packaged_message[1:self.last_num])
         encoded_message = packaged_message[self.last_num:]
         return (leader, first_row, encoded_message)
 
@@ -210,6 +272,12 @@ class QuasiAON(object):
         #Get the value of each character and format it in terms of bits.
         number_list = [str(ord(character)) for character in message]
         return ''.join(number_list)
+
+    def message_to_number_list(self, message):
+        return map(lambda each_character: self.unwrap_value(ord(each_character)), message)
+
+    def number_list_to_message(self, number_list):
+        return ''.join(map(lambda each_number: chr(self.wrap_value(each_number)), number_list))
 
     def message_to_bit_list(self, message):
         """
