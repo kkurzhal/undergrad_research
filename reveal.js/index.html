@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+
+    <title>Message Communication With Quasigroups</title>
+
+    <meta name="description" content="Improved securing of message communication over a network with the use of quasigroups.">
+    <meta name="author" content="Dr. Greer & Kyle Kurzhal">
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/black.css" id="theme">
+
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+
+    <!--[if lt IE 9]>
+	<script src="lib/js/html5shiv.js"></script>
+	<![endif]-->
+  </head>
+
+  <body>
+
+    <div class="reveal">
+
+      <!-- Any section element inside of this container is displayed as a slide -->
+      <div class="slides">
+	<section>
+	  <h1>Message Communication With Transformations Over Quasigroups</h1>
+	  <p>
+	    <small>Dr. Greer & Kyle Kurzhal</small>
+	  </p>
+	</section>
+
+	<section>
+	  <h2>Hello</h2>
+	  <h3>my name is</h3>
+	  <h4>Kyle</h4>
+	  <ul>
+	    <li>Recent CS Graduate</li>
+	    <li>Math is not my strong-suit, but I'll do my best to explain!</li>
+	    <li>I have no previous experience with security ...so this was fun!</li>
+	  </ul>
+	  <p>Please feel free to ask questions!</p>
+	</section>
+	
+	<section>
+	  <section>
+	    <h2>Our Focus</h2>
+	    <p>
+	      The paper that we focused on was "All-Or-Nothing Transforms Using Quasigroups" [1]
+	    </p>
+	    <p>
+	      All-Or-Nothing (AON) transformation: Keep the same encryption method as before, but add on some form of pre-processing to decrease the likelihood of the message being decrypted.
+	    </p>
+	  </section>
+	  <section>
+	    <h2>Brief Definitions</h2>
+	    <ul>
+	      <li>Latin square - An <i>nxn</i> square in which there are no duplicate elements for some given row or column.</li>
+	      <li>Quasigroup - A set where the multiplication is given by the latin square.</li>
+	      <li>Isotopy - </li>
+	    </ul>
+	  </section>
+	</section>
+	<section>
+	  <section>
+	    <h2>How Does It Work?</h2>
+	  </section>
+	  <section>
+	    <h2>Three-Way Isotopy</h2>
+	  </section>
+	  <section>
+	    <h2>Matrix Magic</h2>
+	    <ul>
+	      <li>256 x 256 arrays (thank you, ASCII!)</li>
+	      <li>Multiplication and Division tables</li>
+	      <ul>
+		<!-- maybe some code snippets with this? -->
+		<li>Multiplication formula: {formula}</li>
+		<li>Division formula: {formula}</li>
+	      </ul>
+	      <li></li>
+	    </ul>
+	  </section>
+	  <section>
+	    <h2>Step-By-Step</h2>
+	    <ol>
+	      <li></li>
+	    </ol>
+	  </section>
+	  <section>
+	    <h2>Practicality</h2>
+	    <ul>
+	      <li>Practical application is a concern since the algorithm discussed in the paper is public.</li>
+	      <li>Next steps</li>
+	      <ul>
+		<li>Can the formula be modified to use a one of a large set of formulas to produce the multiplication table?</li>
+		<li>Can we map each element to some other single element in the set and keep that secret?</li>
+		<li>How difficult will it be to crack?</li>
+	    </ul>
+	  </section>
+	  <section>
+	    <h2>Github</h2>
+	    <ul>
+	      <li>Code - https://github.com/kkurzhal/undergrad_research</li>
+	      <li>Presentation - </li>
+	    </ul>
+	  </section>
+      </div>
+    </div>
+
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
+
+    <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+      controls: true,
+      progress: true,
+      history: true,
+      center: true,
+
+      transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+      // Optional reveal.js plugins
+      dependencies: [
+      { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+      { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+      { src: 'plugin/zoom-js/zoom.js', async: true },
+      { src: 'plugin/notes/notes.js', async: true }
+      ]
+      });
+
+    </script>
+
+  </body>
+</html>
